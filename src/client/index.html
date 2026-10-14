@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HSZG Modulkatalog</title>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "mvvm-monster/": "./node_modules/@tobi2409/mvvm-monster/src/",
+                    "layout/": "./node_modules/@tobi2409/layout/src/"
+                }
+            }
+        </script>
+
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body class="frame">
+        <div id="app" @align="client"></div>
+
+        <template id="app-template">
+            <div class="studiengaenge frame" style-display="studiengaengeDisplay">
+                <main @align="client" class="page frame">
+                    <h1 @align="top">Studiengänge</h1>
+
+                    <input @align="top" class="search-input" type="search" placeholder="Studiengang suchen..." aria-label="Studiengang suchen" bind-input-value="studiengaengeSearchPattern" action-input="searchStudiengaenge" />
+                    
+                    <div @align="top" class="search-options frame">
+                        <label @align="left" class="search-option">
+                            <input type="checkbox" bind-change-checked="studiengaengeSearchForName" action-change="searchStudiengaenge" />
+                            Name
+                        </label>
+                        <label @align="left" class="search-option">
+                            <input type="checkbox" bind-change-checked="studiengaengeSearchForDescription" action-change="searchStudiengaenge" />
+                            Beschreibung
+                        </label>
+                    </div>
+
+                    <div @align="client" class="tableview frame">
+                        <div @align="top" class="frame header">
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Name</div>
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Beschreibung</div>
+                        </div>
+
+                        <div @align="client" class="content">
+                            <each of="studiengaenge" as="studiengang">
+                                <div class="frame" action-click="studiengangClick">
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Name"><get>studiengang.name</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Beschreibung"><get>studiengang.description</get></div>
+                                </div>
+                            </each>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <div class="module frame" style-display="moduleDisplay">
+                <main @align="client" class="page frame">
+                    <h1 @align="top">Module</h1>
+
+                    <a @align="top" class="back" href="#" action-click="backToStudiengaenge">&#8592; Zurück</a>
+
+                    <input @align="top" class="search-input" type="search" placeholder="Modul suchen..." aria-label="Modul suchen" bind-input-value="moduleSearchPattern" action-input="searchModule" />
+
+                    <div @align="top" class="search-options frame">
+                        <label @align="left" class="search-option">
+                            <input type="checkbox" bind-change-checked="moduleSearchForName" action-change="searchModule" />
+                            Name
+                        </label>
+                        <label @align="left" class="search-option">
+                            <input type="checkbox" bind-change-checked="moduleSearchForDescription" action-change="searchModule" />
+                            Beschreibung
+                        </label>
+                    </div>
+
+                    <div @align="client" class="tableview frame">
+                        <div @align="top" class="frame header">
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Name</div>
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Beschreibung</div>
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Semester</div>
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">ECTS</div>
+                            <div @align='{"default": "left", "max-width: 700px": "top"}' class="column">Professor</div>
+                        </div>
+
+                        <div @align="client" class="content">
+                            <each of="module" as="modul">
+                                <div class="frame">
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Name"><get>modul.name</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Beschreibung"><get>modul.description</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Semester"><get>modul.semester</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="ECTS"><get>modul.ects</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Professor"><get>modul.professor</get></div>
+                                </div>
+                            </each>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </template>
+
+        <template-use
+            id="app-template-use"
+            template-id="app-template"
+            mount-id="app"
+        >
+        </template-use>
+
+        <script type="module" src="index.js"></script>
+    </body>
+</html>

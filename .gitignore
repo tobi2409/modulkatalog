@@ -1,0 +1,6 @@
+.vscode/
+generated/
+node_modules/
+src/server/pg/
+src/server/db-connection/
+src/server/@tobi2409/
