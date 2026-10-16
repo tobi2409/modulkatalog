@@ -1,9 +1,12 @@
 {
-    "jsClients": ["src/client/index.js"],
+    "jsClients": ["src/client/index.js", "src/client/admin-login/admin-login.js"],
     "servers": [
         {
             "src": "src/server/server.ts",
             "namespace": "Server"
+        }, {
+            "src": "src/server/admin-center.ts",
+            "namespace": "AdminCenter"
         }
     ],
     "rawServerFiles": [],
@@ -24,7 +27,10 @@
         "PATCH": "^(update|set|patch)",
         "DELETE": "^(delete|remove)"
     },
-    "method-rules-custom-functions": {},
+    "method-rules-custom-functions": {
+        "loadStudiengaenge": "GET",
+        "loadModule": "GET"
+    },
     "binaryTypes": [
         "ArrayBuffer",
         "Uint8Array",

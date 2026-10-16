@@ -1,7 +1,5 @@
 import SQLQueryBuilder from '@tobi2409/sql-query-builder'
-import { DbConnection } from './db-connection/db-connection-wrapper.ts'
-
-const dbConnection = new DbConnection('pg')
+import { dbConnection } from './db-connection.ts'
 
 type Studiengang = {
     id: number
@@ -19,6 +17,7 @@ type Modul = {
 }
 
 // @rest
+// @url("studiengaenge")
 export async function loadStudiengaenge(searchPattern: string, searchForName: boolean, searchForDescription: boolean): Promise<Studiengang[]> {
     let query = new SQLQueryBuilder('pg')
         .select(['id', 'name', 'description'])
@@ -52,6 +51,7 @@ export async function loadStudiengaenge(searchPattern: string, searchForName: bo
 }
 
 // @rest
+// @url("studiengaenge/{studiengangId}/module")
 export async function loadModule(studiengangId: number, searchPattern: string, searchForName: boolean, searchForDescription: boolean): Promise<Modul[]> {
     const conditions = ['studiengang_id = ?']
     const values: (number | string)[] = [studiengangId]

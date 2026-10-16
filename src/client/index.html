@@ -20,6 +20,24 @@
         <div id="app" @align="client"></div>
 
         <template id="app-template">
+            <a href="#admin-login" action-click="showAdminLogin">Admin Login</a>
+
+            <div class="admin-login frame" style-display="adminLoginDisplay">
+                <main @align="client" class="page frame">
+                    <h1 @align="top">Admin Login</h1>
+
+                    <form id="adminLoginForm" action-submit="adminLogin">
+                        <label for="username">Benutzername:</label>
+                        <input type="text" id="username" name="username" required />
+
+                        <label for="password">Passwort:</label>
+                        <input type="password" id="password" name="password" required />
+
+                        <button type="submit">Login</button>
+                    </form>
+                </main>
+            </div>
+
             <div class="studiengaenge frame" style-display="studiengaengeDisplay">
                 <main @align="client" class="page frame">
                     <h1 @align="top">Studiengänge</h1>
@@ -46,12 +64,25 @@
                         <div @align="client" class="content">
                             <each of="studiengaenge" as="studiengang">
                                 <div class="frame" action-click="studiengangClick">
-                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Name"><get>studiengang.name</get></div>
-                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Beschreibung"><get>studiengang.description</get></div>
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Name">
+                                        <span style-display="isNonAdminModeDisplay"><get>studiengang.name</get></span>
+                                        <span style-display="isAdminModeDisplay">
+                                            <input type="text" bind-input-value="studiengang.name" />
+                                        </span>
+                                    </div>
+                                    
+                                    <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Beschreibung">
+                                        <span style-display="isNonAdminModeDisplay"><get>studiengang.description</get></span>
+                                        <span style-display="isAdminModeDisplay">
+                                            <input type="text" bind-input-value="studiengang.description" />
+                                        </span>
+                                    </div>
                                 </div>
                             </each>
                         </div>
                     </div>
+
+                    <button @align="bottom" style-display="isAdminModeDisplay" action-click="saveStudiengaenge">Speichern</button>
                 </main>
             </div>
 
