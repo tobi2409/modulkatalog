@@ -20,13 +20,13 @@
         <div id="app" @align="client"></div>
 
         <template id="app-template">
-            <a href="#admin-login" action-click="showAdminLogin">Admin Login</a>
+            <a class="admin-login-link" href="#admin-login" action-click="showAdminLogin">Admin Login</a>
 
-            <div class="admin-login frame" style-display="adminLoginDisplay">
-                <main @align="client" class="page frame">
+            <div class="admin-login" style-display="adminLoginDisplay">
+                <main @align="client" class="admin-login-panel frame">
                     <h1 @align="top">Admin Login</h1>
 
-                    <form id="adminLoginForm" action-submit="adminLogin">
+                    <form id="adminLoginForm" class="admin-login-form" action-submit="adminLogin">
                         <label for="username">Benutzername:</label>
                         <input type="text" id="username" name="username" required />
 
@@ -67,14 +67,14 @@
                                     <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Name">
                                         <span style-display="isNonAdminModeDisplay"><get>studiengang.name</get></span>
                                         <span style-display="isAdminModeDisplay">
-                                            <input type="text" bind-input-value="studiengang.name" />
+                                            <input class="column-edit" type="text" bind-input-value="studiengang.name" action-click="columnEditClick" />
                                         </span>
                                     </div>
                                     
                                     <div @align='{"default": "left", "max-width: 700px": "top"}' class="column" data-label="Beschreibung">
                                         <span style-display="isNonAdminModeDisplay"><get>studiengang.description</get></span>
                                         <span style-display="isAdminModeDisplay">
-                                            <input type="text" bind-input-value="studiengang.description" />
+                                            <input class="column-edit" type="text" bind-input-value="studiengang.description" action-click="columnEditClick" />
                                         </span>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
 
-                    <button @align="bottom" style-display="isAdminModeDisplay" action-click="saveStudiengaenge">Speichern</button>
+                    <button class="save-button" style-display="isAdminModeDisplay" action-click="saveStudiengaenge">Speichern</button>
                 </main>
             </div>
 

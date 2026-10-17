@@ -42,7 +42,9 @@ export async function loadStudiengaenge(searchPattern: string, searchForName: bo
         }
     }
 
-    query = query.toSQL()
+    query = query
+        .orderBy('name')
+        .toSQL()
 
     const connection = (await dbConnection.getPool()) as any
     const result = await connection.query(query.text, query.values)

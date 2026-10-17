@@ -1,5 +1,5 @@
 {
-    "jsClients": ["src/client/index.js", "src/client/admin-login/admin-login.js"],
+    "jsClients": ["src/client/index.js"],
     "servers": [
         {
             "src": "src/server/server.ts",

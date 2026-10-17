@@ -31,6 +31,101 @@ h1 {
 	letter-spacing: 0;
 }
 
+.admin-login-link {
+	position: fixed;
+	top: 0.75rem;
+	right: 1rem;
+	z-index: 10;
+	color: #667160;
+	font-size: 0.78rem;
+	text-decoration: none;
+}
+
+.admin-login-link:hover,
+.admin-login-link:focus-visible {
+	color: var(--green-dark);
+	text-decoration: underline;
+}
+
+.admin-login {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	padding: 1rem;
+	background: #25301f66;
+	backdrop-filter: blur(3px);
+}
+
+.admin-login-panel {
+	width: min(100%, 24rem);
+	height: auto;
+	margin: max(8vh, 3rem) auto 0;
+	padding: 1.75rem;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: white;
+	box-shadow: 0 20px 48px #25301f33;
+}
+
+.admin-login-panel h1 {
+	margin-bottom: 1.25rem;
+	font-size: 1.5rem;
+}
+
+.admin-login-form label {
+	display: block;
+	margin: 0.85rem 0 0.3rem;
+	color: #425237;
+	font-size: 0.88rem;
+	font-weight: 700;
+}
+
+.admin-login-form input,
+.column-edit {
+	width: 100%;
+	padding: 0.6rem 0.7rem;
+	color: #25301f;
+	background: #fbfcfa;
+	border: 1px solid #b8c7a6;
+	border-radius: 5px;
+	font: inherit;
+	outline: none;
+}
+
+.admin-login-form input:focus,
+.column-edit:focus {
+	border-color: var(--green);
+	background: white;
+	box-shadow: 0 0 0 3px #74a12126;
+}
+
+.admin-login-form button,
+.save-button {
+	padding: 0.6rem 1rem;
+	color: white;
+	background: var(--green-dark);
+	border: 0;
+	border-radius: 5px;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.admin-login-form button {
+	margin-top: 1.25rem;
+}
+
+.admin-login-form button:hover,
+.save-button:hover {
+	background: #3f6110;
+}
+
+.save-button {
+	width: fit-content;
+	align-self: flex-start;
+	margin-top: 1rem;
+}
+
 .back {
 	margin: -0.75rem 0 1rem;
 	color: var(--green-dark);
@@ -129,6 +224,11 @@ h1 {
 	min-width: 0;
 	padding: 0.85rem 1rem;
 	overflow-wrap: anywhere;
+}
+
+.column-edit {
+	padding: 0.45rem 0.55rem;
+	background: #f8faf5;
 }
 
 .studiengaenge .column:nth-child(1) {

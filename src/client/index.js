@@ -3,24 +3,20 @@
 
 import TemplateEngine from 'mvvm-monster/template-engine.js'
 import ModelJournal from 'mvvm-monster/reactivity/model-journal.js'
+import ViewModelArray from 'mvvm-monster/model/viewmodel-array.js'
+import MVVMDataLoader from 'mvvm-monster/dataloaders/mvvm-data-loader.js'
 
-let isAdminMode = true
+let model = ModelJournal.reactive({
+    studiengaenge: [],
+    module: [],
+    isAdminMode: sessionStorage.getItem('adminToken') ? true : false
+})
 
-let studiengaengeSearchTimer
-let latestStudiengaengeSearch = 0
-
-let moduleSearchTimer
-let latestModuleSearch = 0
-
-let data = TemplateEngine.reactive(
+const viewModel = TemplateEngine.reactive(
     {
-        studiengaenge: [],
-        module: [],
         adminLoginDisplay: 'none',
-        isAdminMode,
-        isAdminModeDisplay: isAdminMode ? 'block' : 'none',
-        isNonAdminMode: !isAdminMode,
-        isNonAdminModeDisplay: !isAdminMode ? 'block' : 'none',
+        isAdminModeDisplay: model.isAdminMode ? 'block' : 'none',
+        isNonAdminModeDisplay: model.isAdminMode ? 'none' : 'block',
         studiengaengeDisplay: 'block',
         moduleDisplay: 'none',
         studiengaengeSearchPattern: '',
@@ -30,9 +26,34 @@ let data = TemplateEngine.reactive(
         moduleSearchPattern: '',
         moduleSearchForName: true,
         moduleSearchForDescription: true,
-        showAdminLogin: () => {
-            data.adminLoginDisplay = 'block'
+        studiengaengeSearchTimer: null,
+        latestStudiengaengeSearch: 0,
+        moduleSearchTimer: null,
+        latestModuleSearch: 0,
+
+        // Model und ViewModel verwenden dieselbe Darstellung.
+        get studiengaenge() {
+            return ViewModelArray.get(model.studiengaenge, (studiengang) => studiengang).data
         },
+
+        get module() {
+            return ViewModelArray.get(model.module, (modul) => modul).data
+        },
+
+        set isAdminMode(value) {
+            model.isAdminMode = value
+            viewModel.isAdminModeDisplay = value ? 'block' : 'none'
+            viewModel.isNonAdminModeDisplay = value ? 'none' : 'block'
+        },
+
+        get isAdminMode() {
+            return model.isAdminMode
+        },
+
+        showAdminLogin: () => {
+            viewModel.adminLoginDisplay = 'block'
+        },
+
         adminLogin: async (event) => {
             event.preventDefault()
 
@@ -44,61 +65,67 @@ let data = TemplateEngine.reactive(
                 sessionStorage.setItem('adminToken', token)
 
                 if (token) {
-                    data.isAdminMode = true
-                    data.isAdminModeDisplay = 'block'
-                    data.isNonAdminMode = false
-                    data.isNonAdminModeDisplay = 'none'
+                    viewModel.isAdminMode = true
                 }
 
-                data.adminLoginDisplay = 'none'
+                viewModel.adminLoginDisplay = 'none'
             } catch (error) {
                 alert(`Fehler: ${error.message}`)
             }
         },
+
+        columnEditClick: (event) => {
+            event.stopPropagation()
+        },
+
         studiengangClick: async (_, databaseEntry) => {
-            data.selectedStudiengangId = databaseEntry.id
-            data.moduleSearchPattern = ''
+            viewModel.selectedStudiengangId = databaseEntry.id
+            viewModel.moduleSearchPattern = ''
 
-            const module = await Server.loadModule(databaseEntry.id, '', data.moduleSearchForName, data.moduleSearchForDescription)
-            data.module.splice(0, data.module.length, ...module)
+            const module = await Server.loadModule(databaseEntry.id, '', viewModel.moduleSearchForName, viewModel.moduleSearchForDescription)
+            viewModel.module.splice(0, viewModel.module.length, ...module)
 
-            data.studiengaengeDisplay = 'none'
-            data.moduleDisplay = 'block'
+            viewModel.studiengaengeDisplay = 'none'
+            viewModel.moduleDisplay = 'block'
         },
+
         backToStudiengaenge: () => {
-            data.studiengaengeDisplay = 'block'
-            data.moduleDisplay = 'none'
+            viewModel.studiengaengeDisplay = 'block'
+            viewModel.moduleDisplay = 'none'
         },
+
         searchStudiengaenge: () => {
-            clearTimeout(studiengaengeSearchTimer)
-            const search = ++latestStudiengaengeSearch
+            clearTimeout(viewModel.studiengaengeSearchTimer)
+            const search = ++viewModel.latestStudiengaengeSearch
 
-            studiengaengeSearchTimer = setTimeout(async () => {
-                const studiengaenge = await Server.loadStudiengaenge(data.studiengaengeSearchPattern, data.studiengaengeSearchForName, data.studiengaengeSearchForDescription)
+            viewModel.studiengaengeSearchTimer = setTimeout(async () => {
+                const studiengaenge = await Server.loadStudiengaenge(viewModel.studiengaengeSearchPattern, viewModel.studiengaengeSearchForName, viewModel.studiengaengeSearchForDescription)
 
-                if (search === latestStudiengaengeSearch) {
-                    data.studiengaenge.splice(0, data.studiengaenge.length, ...studiengaenge)
+                if (search === viewModel.latestStudiengaengeSearch) {
+                    MVVMDataLoader.loadData(studiengaenge, viewModel.studiengaenge)
                 }
             }, 300)
         },
+
         searchModule: () => {
-            clearTimeout(moduleSearchTimer)
-            const search = ++latestModuleSearch
+            clearTimeout(viewModel.moduleSearchTimer)
+            const search = ++viewModel.latestModuleSearch
 
-            moduleSearchTimer = setTimeout(async () => {
-                const module = await Server.loadModule(data.selectedStudiengangId, data.moduleSearchPattern, data.moduleSearchForName, data.moduleSearchForDescription)
+            viewModel.moduleSearchTimer = setTimeout(async () => {
+                const module = await Server.loadModule(viewModel.selectedStudiengangId, viewModel.moduleSearchPattern, viewModel.moduleSearchForName, viewModel.moduleSearchForDescription)
 
-                if (search === latestModuleSearch) {
-                    data.module.splice(0, data.module.length, ...module)
+                if (search === viewModel.latestModuleSearch) {
+                    viewModel.module.splice(0, viewModel.module.length, ...module)
                 }
             }, 300)
         },
+
         saveStudiengaenge: async () => {
-            if (!isAdminMode) {
+            if (!model.isAdminMode) {
                 return
             }
 
-            const journal = ModelJournal.getJournal(data)
+            const journal = ModelJournal.getJournal(model)
             console.log(journal)
             if (journal.length === 0) {
                 return
@@ -119,8 +146,4 @@ let data = TemplateEngine.reactive(
 )
 
 const studiengaenge = await Server.loadStudiengaenge('', true, true)
-data.studiengaenge.splice(0, data.studiengaenge.length, ...studiengaenge)
-
-//if (isAdminRoute) {
-    data = ModelJournal.reactive(data)
-//}
+MVVMDataLoader.loadData(studiengaenge, viewModel.studiengaenge)
