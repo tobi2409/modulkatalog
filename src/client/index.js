@@ -137,9 +137,12 @@ const viewModel = TemplateEngine.reactive(
                 throw new Error('Kein Admin-Token vorhanden')
             }
 
-            await AdminCenter.saveStudiengaenge(token, journal)
-
-            journal.length = 0
+            try {
+                await AdminCenter.saveStudiengaenge(token, journal)
+                journal.length = 0
+            } catch (error) {
+                alert('Fehler beim Speichern der Studiengänge: ' + error)
+            }
         }
     },
     document.getElementById('app-template-use')

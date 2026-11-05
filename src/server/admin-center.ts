@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
-import SQLQueryBuilder from '@tobi2409/sql-query-builder'
 import { AuthenticationCoreDbLogin } from './@tobi2409/authentication-core-db/login.ts'
 import { AuthenticationCoreDbCurrentUser } from './@tobi2409/authentication-core-db/current-user.ts'
 import { dbConnection } from './db-connection.ts'
+import { saveData } from './database-tools.ts'
 //import argon2 from 'argon2'
 
 dotenv.config()
@@ -94,47 +94,25 @@ export async function requireAdminAuthentication(req: MiddlewareRequest, res: Mi
 // @authorizationParams(["token"])
 // @url("journal")
 export async function saveStudiengaenge(token: string, journal: JournalEntry[]): Promise<void> {
-    const connection = (await dbConnection.getPool()) as any
-    const transaction = await connection.connect()
-
-    try {
-        await transaction.query('BEGIN')
-
-        for (const entry of journal) {
-            const column = entry.attributeName
-
-            switch (entry.change.operation) {
-                case 'set': {
-                    const newValue = entry.change.value
-
-                    if (column === 'name' && (typeof newValue !== 'string' || newValue.trim() === '')) {
+    await saveData(
+        'studiengaenge',
+        journal,
+        ['set'],
+        {
+            name: {
+                conditions: [newValue => {
+                    if (typeof newValue !== 'string' || newValue.trim() === '') {
                         throw new Error('Der Name eines Studiengangs darf nicht leer sein')
                     }
-
-                    if (column === 'description' && newValue !== null && typeof newValue !== 'string') {
+                }]
+            },
+            description: {
+                conditions: [newValue => {
+                    if (newValue !== null && typeof newValue !== 'string') {
                         throw new Error('Die Beschreibung muss Text oder null sein')
                     }
-
-                    const query = new SQLQueryBuilder(dbConnection.getDriverName())
-                        .update('studiengaenge')
-                        .set({ [column]: newValue as string | null })
-                        .where('id = ?', [entry.id])
-                        .toSQL()
-
-                    await transaction.query(query.text, query.values)
-                    break
-                }
-                default: {
-                    throw new Error(`Nicht unterstützte Journal-Operation: ${entry.change.operation}`)
-                }
+                }]
             }
         }
-
-        await transaction.query('COMMIT')
-    } catch (error) {
-        await transaction.query('ROLLBACK')
-        throw error
-    } finally {
-        transaction.release()
-    }
+    )
 }
