@@ -78,32 +78,59 @@ export async function loadData<T>(
     return result.rows
 }
 
-// Beispiel für einen set-Change:
-// { id: 2, attributeName: 'name', change: { operation: 'set', value: 'Medieninformatik' } }
-// Ergebnis: Die Spalte "name" des Datensatzes mit ID 2 wird aktualisiert.
-//
-// Beispiel für einen splice-Change an der m:n-Beziehung "module_pruefungsarten":
-// {
-//     id: 3,
-//     attributeName: 'pruefungsarten',
-//     change: {
-//         action: 'splice',
-//         removedItems: [{ id: 2 }],
-//         items: [{ id: 1 }]
-//     }
-// }
-// Ergebnis: Für Modul 3 wird die Beziehung zu Prüfungsart 2 gelöscht und zu Prüfungsart 1 eingefügt.
-//
-// Vorgesehenes splice-Beispiel ohne m:n-Beziehung (noch nicht implementiert):
-// {
-//     attributeName: 'studiengaenge',
-//     change: {
-//         action: 'splice',
-//         removedIds: [2],
-//         items: [{ name: 'Digitale Systeme', description: null }]
-//     }
-// }
-// Ergebnis: Studiengang 2 wird aus tableName "studiengaenge" gelöscht und der neue Datensatz dort eingefügt.
+/* Beispiele für Journal-Einträge
+
+{
+  "attributeName": "name",
+  "change": {
+    "operation": "set",
+    "value": "Max Mustermanna"
+  },
+  "id": 1
+}
+
+{
+  "attributeName": "persons",
+  "change": {
+    "action": "push",
+    "items": [
+      {
+        "id": "new-wdxuxls",
+        "name": "b",
+        "wage": "10",
+        "birthyear": 1996,
+        "address": {
+          "street": "",
+          "city": ""
+        },
+        "children": []
+      }
+    ]
+  }
+}
+
+{
+  "attributeName": "children",
+  "change": {
+    "action": "push",
+    "items": [
+      {
+        "id": "new-ob2lpbn",
+        "name": "c",
+        "wage": "10",
+        "birthyear": 1996,
+        "address": {
+          "street": "",
+          "city": ""
+        },
+        "children": []
+      }
+    ]
+  },
+  "id": 1
+}
+*/
+
 export async function saveData(
     tableName: string,
     journal: readonly JournalEntry[],
